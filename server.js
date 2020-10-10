@@ -5,10 +5,15 @@ const mongoose = require("mongoose");
 const bodyParser = require('body-parser');
 const exphbs = require('express-handlebars');
 
+//const seeder = require("./seeders/seed.js");
+
+// routes
+const workouts = require("./routes/workouts");
+
 // set the port to used process.env or port 3000 if that's not available.
 const PORT = process.env.PORT || 3000;
 
-//const db = require("./models");
+const db = require("./models");
 
 // create express app and configure middleware
 const app = express();
@@ -23,7 +28,11 @@ app.use(express.static("public"));
 
 // all html routes
 const htmlRoutes = require("./routes/html-routes");
+// const { db } = require("./models/Workout");
 app.use("", htmlRoutes);
+
+// api routes
+app.use("/api", workouts);
 
 // logger middleware... what does this do exactly?
 app.use(logger("dev"));
@@ -35,6 +44,15 @@ mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost/fitnessdb", { u
 // Set up handlebars
 app.engine("hbs", exphbs({extname: "hbs", deafultLayout: "main"}));
 app.set("view engine", "hbs");
+
+// create a workout collection, by default the day will be today, no exercises yet
+// db.Workout.create({})
+//   .then(dbWorkout => {
+//     console.log("workout: ", dbWorkout);
+//   })
+//   .catch(({ message }) => {
+//     console.log(message);
+//   })
 
 // Start the server
 app.listen(PORT, () => console.info(`Listening on PORT: ${PORT}`));
