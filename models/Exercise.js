@@ -5,15 +5,14 @@ const ExerciseSchema = new Schema({
   name: {
     type: String,
     trim: true,
-    unique: true
   },
-  
+
   duration: {
     type: Number,
     required: "Duration is required."
   }
 });
 
-const Workout = mongoos.model("Workout", WorkoutSchema);
+const Exercise = mongoose.model("Exercise", ExerciseSchema);
 
-module.exports = Workout;
+module.exports = Exercise;
