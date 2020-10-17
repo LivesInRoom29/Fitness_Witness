@@ -5,14 +5,15 @@ fetch("/api/workouts/range")
     return response.json();
   })
   .then(data => {
-    populateChart(data);
+    populateChart(data.splice(-7));
   });
 
 
 API.getWorkoutsInRange()
 
-  function generatePalette() {
-    const arr = [
+// Colors for charts
+function generatePalette() {
+  const arr = [
     "#003f5c",
     "#2f4b7c",
     "#665191",
@@ -32,12 +33,22 @@ API.getWorkoutsInRange()
   ]
 
   return arr;
-  }
+}
+
 function populateChart(data) {
+  console.log("data: ", data);
   let durations = duration(data);
   let pounds = calculateTotalWeight(data);
   let workouts = workoutNames(data);
   const colors = generatePalette();
+  // object containing all the exercises with their total durations
+  const exerciseDurations = exerciseDurationTotals(data);
+  const eachExercise = Object.keys(exerciseDurations);
+  const totalDurationOfEachExerise = Object.values(exerciseDurations);
+
+  //Object containing all the exercises with their total pounds
+  const poundsByExercise = exercisePoundsTotal(data);
+  const totalPoundsOfEachExercise = Object.values(poundsByExercise);
 
   let line = document.querySelector("#canvas").getContext("2d");
   let bar = document.querySelector("#canvas2").getContext("2d");
@@ -58,7 +69,7 @@ function populateChart(data) {
       ],
       datasets: [
         {
-          label: "Workout Duration In Minutes",
+          label: "Workout Duration In Minutes Over the Past 7 Days",
           backgroundColor: "red",
           borderColor: "red",
           data: durations,
@@ -148,19 +159,19 @@ function populateChart(data) {
   let pieChart = new Chart(pie, {
     type: "pie",
     data: {
-      labels: workouts,
+      labels: eachExercise,
       datasets: [
         {
-          label: "Excercises Performed",
+          label: "Excercises Performed - By Duration",
           backgroundColor: colors,
-          data: durations
+          data: totalDurationOfEachExerise
         }
       ]
     },
     options: {
       title: {
         display: true,
-        text: "Excercises Performed"
+        text: "Excercises Performed - By Duration"
       }
     }
   });
@@ -168,19 +179,19 @@ function populateChart(data) {
   let donutChart = new Chart(pie2, {
     type: "doughnut",
     data: {
-      labels: workouts,
+      labels: eachExercise,
       datasets: [
         {
-          label: "Excercises Performed",
+          label: "Excercises Performed - By Pounds",
           backgroundColor: colors,
-          data: pounds
+          data: totalPoundsOfEachExercise
         }
       ]
     },
     options: {
       title: {
         display: true,
-        text: "Excercises Performed"
+        text: "Excercises Performed - By Pounds"
       }
     }
   });
@@ -218,6 +229,73 @@ function workoutNames(data) {
       workouts.push(exercise.name);
     });
   });
-  
+
   return workouts;
+}
+
+const exerciseDurationTotals = (data) => {
+  // create an object for exercises
+  let exerciseDurations = {}
+
+  data.forEach(workout => {
+    workout.exercises.forEach(exercise => {
+      // capitalize the first letter of each word in the exercise name
+      exerciseName = titleCase(exercise.name);
+
+      //check to see if the exercise is in the array already
+      if (exerciseName in exerciseDurations) {
+        // if it is, add to the duration
+        exerciseDurations[exerciseName] += exercise.duration;
+      } else {
+        // if it's not, create a new key for that exercise with the duration of that exercise
+        exerciseDurations[exerciseName] = exercise.duration;
+      }
+    });
+  });
+
+  return exerciseDurations;
+}
+
+const exercisePoundsTotal = (data) => {
+  let exercisePounds = {}
+
+  data.forEach(workout => {
+    workout.exercises.forEach(exercise => {
+      // capitalize the first letter of each word in the exercise name
+      exerciseName = titleCase(exercise.name);
+
+      //check to see if the exercise is in the array already
+      if (exerciseName in exercisePounds) {
+        // if it is, add to the duration
+        exercisePounds[exerciseName] += exercise.weight;
+      } else {
+        // if it's not, create a new key for that exercise with the duration of that exercise
+        exercisePounds[exerciseName] = exercise.weight;
+      }
+    });
+  });
+
+  console.log("excercise pounds: ", exercisePounds)
+  return exercisePounds;
+}
+
+// To capitalize a string
+const capitalize = (string) => {
+  // Concatinate the capitalized first letter with the rest of the string
+  if (typeof string !== 'string' || string === "") {
+    return "";
+  } else {
+    return string[0].toUpperCase() + string.slice(1);
+  }
+};
+
+// To capitalize the first letter of each word in a string
+const titleCase = (string) => {
+  return string.split(" ").map(word => {
+    if (word === "") {
+      return ""
+    } else {
+      return capitalize(word);
+    }
+  }).join(" ");
 }
