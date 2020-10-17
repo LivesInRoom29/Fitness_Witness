@@ -6,4 +6,4 @@ const workoutRoutes = require("./workouts");
 
 const AppRouter = express.Router();
 
-AppRouter.use("/workouts");
+AppRouter.use("/workouts", workoutRoutes);
