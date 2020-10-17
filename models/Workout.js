@@ -15,48 +15,86 @@ const WorkoutSchema = new Schema({
 
   exercises: [
     {
+      type: {
+        type: String,
+        trim: true,
+        required: [true, "Exercise type is required."]
+      },
+
       name: {
         type: String,
         trim: true,
+        required: [true, "Exercise name is required."],
+        //validation not working
+        validate: {
+          validator: function (v) {
+            if (v === "") {
+              return false;
+            } else {
+              return true;
+            }
+          }
+        }
       },
 
       duration: {
         type: Number,
-        required: "Duration is required."
-      }
+        required: [true, "Duration is required."]
+      },
+
+      distance: {
+        type: Number,
+      },
+
+      weight: {
+        type: Number,
+      },
+
+      sets: {
+        type: Number,
+      },
+
+      reps: {
+        type: Number,
+      },
+
     }
   ],
 
-  totalDistance: {
-    type: Number,
-    default: 0
-  },
+  // totalDistance: {
+  //   type: Number,
+  //   default: 0
+  // },
 
-  totalDuration: {
-    type: Number,
-    default: 0
-  },
+  // totalDuration: {
+  //   type: Number,
+  //   default: 0
+  // },
 
-  totalWeight: {
-    type: Number,
-    default: 0
-  },
+  // totalWeight: {
+  //   type: Number,
+  //   default: 0
+  // },
 
-  totalSets: {
-    type: Number,
-    default: 0
-  },
+  // totalSets: {
+  //   type: Number,
+  //   default: 0
+  // },
 
-  totalReps: {
-    type: Number,
-    default: 0
-  }
+  // totalReps: {
+  //   type: Number,
+  //   default: 0
+  // }
 
 });
 
-// UserSchema.methods.setTotalDistance = function() {
+WorkoutSchema.methods.setTotalDuration = function() {
+  this.exercises.forEach(exercise => {
+    this.totalDuration += exercise.duration;
+  });
 
-// }
+  return this.totalDuration;
+};
 
 const Workout = mongoose.model("Workout", WorkoutSchema);
 
