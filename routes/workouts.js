@@ -3,10 +3,9 @@ const db = require("../models");
 
 const router = express.Router();
 
+// Get all workouts
 router.get("/workouts", (req, res) => {
   db.Workout.find({})
-    // populate the workout with the associated exercises using the ids that were added when the exercise was created
-    // .populate("exercises")
     .then(dbWorkout => {
       res.json(dbWorkout);
     })
@@ -15,8 +14,19 @@ router.get("/workouts", (req, res) => {
     });
 });
 
+// Get all workouts within a given range
+router.get("/workouts/range", (req, res) => {
+  db.Workout.find({})
+    .then(dbWorkout => {
+      res.json(dbWorkout);
+    })
+    .catch(err => {
+      res.json(err);
+    });
+})
+
+// Create a new workout
 router.post("/workouts", ({ body }, res) => {
-  console.log("random string");
   db.Workout.create(body)
     .then((data) => {
       res.json(data);
@@ -26,33 +36,17 @@ router.post("/workouts", ({ body }, res) => {
     });
 });
 
-// ** Need to change to change other things in order to use this
-// seed data is not set up this way.
-// router.put("/workouts/:id", ({ body, params }, res) => {
-//   console.log("body: ", body);
-//   console.log("params: ", params);
-//   // create new exercise
-//   // link that to the workout by adding it's id to the array in the exercises field
-//   db.Exercise.create(body)
-//     .then(({ _id }) => db.Workout.findOneAndUpdate(params, { $push: { exercises: _id } }, { new: true }))
-//     .then(dbWorkout => {
-//       res.json(dbWorkout);
-//     })
-//     .catch(err => {
-//       res.json(err);
-//     })
-// });
-
+// to add exercise to array (update workout)
 router.put("/workouts/:id", ({ body, params }, res) => {
-    console.log("body: ", body);
-    console.log("params: ", params);
-    db.Workout.findByIdAndUpdate(params, body, { new: true })
+    // body is the object with exercise data; need to add this to the exercises array in current Workout
+    db.Workout.findByIdAndUpdate({ _id : params.id }, { $push: { exercises: body }}, { new: true })
       .then(dbWorkout => {
+        console.log("dbWorkout: ", dbWorkout);
         res.json(dbWorkout);
       })
       .catch(err => {
         res.json(err);
       })
-  });
+});
 
 module.exports = router;
