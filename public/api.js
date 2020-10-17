@@ -12,16 +12,23 @@ const API = {
   },
   async addExercise(data) {
     const id = location.search.split("=")[1];
+    console.log("id:", id);
 
-    const res = await fetch("/api/workouts/" + id, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data)
-    });
+    try {
+      const res = await fetch("/api/workouts/" + id, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data)
+      });
 
-    const json = await res.json();
+      const json = await res.json();
+      console.log(json);
+      return json;
+    }
+    catch(err) {
+      console.log("An Error Occurred While Trying to Add Exercise: ", err);
+    }
 
-    return json;
   },
   async createWorkout(data = {}) {
     const res = await fetch("/api/workouts", {
