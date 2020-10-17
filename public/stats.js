@@ -69,7 +69,7 @@ function populateChart(data) {
       ],
       datasets: [
         {
-          label: "Workout Duration In Minutes Over the Past 7 Days",
+          label: "Workout Duration In Minutes",
           backgroundColor: "red",
           borderColor: "red",
           data: durations,
@@ -79,16 +79,20 @@ function populateChart(data) {
     },
     options: {
       responsive: true,
+      mainAspectRatio: false,
       title: {
-        display: true
+        display: true,
+        text: "Workout Duration Over the Past 7 Days",
+        fontSize: 20
       },
       scales: {
         xAxes: [
           {
             display: true,
             scaleLabel: {
-              display: true
-            }
+              display: true,
+            },
+
           }
         ],
         yAxes: [
@@ -140,9 +144,12 @@ function populateChart(data) {
       ]
     },
     options: {
+      responsive: true,
+      mainAspectRatio: false,
       title: {
         display: true,
-        text: "Pounds Lifted"
+        text: "Pounds Lifted",
+        fontSize: 20
       },
       scales: {
         yAxes: [
@@ -169,9 +176,12 @@ function populateChart(data) {
       ]
     },
     options: {
+      responsive: true,
+      mainAspectRatio: false,
       title: {
         display: true,
-        text: "Excercises Performed - By Duration"
+        text: "Excercises Performed - By Duration",
+        fontSize: 20
       }
     }
   });
@@ -189,9 +199,12 @@ function populateChart(data) {
       ]
     },
     options: {
+      responsive: true,
+      mainAspectRatio: false,
       title: {
         display: true,
-        text: "Excercises Performed - By Pounds"
+        text: "Excercises Performed - By Pounds",
+        fontSize: 20
       }
     }
   });
