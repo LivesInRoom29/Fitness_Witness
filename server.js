@@ -4,7 +4,7 @@ const logger = require("morgan");
 const mongoose = require("mongoose");
 const bodyParser = require('body-parser');
 const exphbs = require('express-handlebars');
-const dotenv = require('env').config();
+require('dotenv').config();
 
 //const seeder = require("./seeders/seed.js");
 
