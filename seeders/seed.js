@@ -2,7 +2,7 @@ let mongoose = require("mongoose");
 let db = require("../models");
 
 //change from workout to fitnessdb
-mongoose.connect("mongodb://localhost/fitnessdb", {
+mongoose.connect(process.env.DB_URL, {
   useNewUrlParser: true,
   useFindAndModify: false
 });
