@@ -41,7 +41,7 @@ app.use(logger("dev"));
 // setup connection to the db using mongoose
 // if deployed, use that db, otherwise use the local db
 //mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost/fitnessdb", { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false });
-mongoose.connect(process.env.MONODB_URI || process.env.DB_URL, { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false })
+mongoose.connect(process.env.MONGO_URI || process.env.DB_URL, { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false })
 
 // Set up handlebars
 app.engine("hbs", exphbs({extname: "hbs", deafultLayout: "main"}));
