@@ -47,8 +47,8 @@ function populateChart(data) {
   const totalDurationOfEachExerise = Object.values(exerciseDurations);
 
   //Object containing all the exercises with their total pounds
-  const poundsByExercise = exercisePoundsTotal(data);
-  const totalPoundsOfEachExercise = Object.values(poundsByExercise);
+  const maxPounds = exerciseMaxPounds(data);
+  const maxPoundsByExercise = Object.values(maxPounds);
 
   let line = document.querySelector("#canvas").getContext("2d");
   let bar = document.querySelector("#canvas2").getContext("2d");
@@ -194,7 +194,7 @@ function populateChart(data) {
         {
           label: "Excercises Performed - By Pounds",
           backgroundColor: colors,
-          data: totalPoundsOfEachExercise
+          data: maxPoundsByExercise
         }
       ]
     },
@@ -203,7 +203,7 @@ function populateChart(data) {
       mainAspectRatio: false,
       title: {
         display: true,
-        text: "Excercises Performed - By Pounds",
+        text: "Excercises Performed - Max Weight",
         fontSize: 20
       }
     }
@@ -269,7 +269,7 @@ const exerciseDurationTotals = (data) => {
   return exerciseDurations;
 }
 
-const exercisePoundsTotal = (data) => {
+const exerciseMaxPounds = (data) => {
   let exercisePounds = {}
 
   data.forEach(workout => {
@@ -279,10 +279,12 @@ const exercisePoundsTotal = (data) => {
 
       //check to see if the exercise is in the array already
       if (exerciseName in exercisePounds) {
-        // if it is, add to the duration
-        exercisePounds[exerciseName] += exercise.weight;
+        // if it is, check to see if weight is more; if it is, change the weight to the new value
+        if (exercisePounds[exerciseName] < exercise.weight) {
+          exercisePounds[exerciseName] = exercise.weight;
+        }
       } else {
-        // if it's not, create a new key for that exercise with the duration of that exercise
+        // if it's not, create a new key for that exercise with the weight used for that exercise
         exercisePounds[exerciseName] = exercise.weight;
       }
     });
