@@ -36,12 +36,14 @@ function generatePalette() {
 }
 
 function populateChart(data) {
-  console.log("data: ", data);
-  // an array of
+  // an array of dates, durations, and pounds for each workout for use with labels/data for line and bar graphs
   let dateLabels = dates(data);
   let durations = duration(data);
   let pounds = calculateTotalWeight(data);
+
+  // Colors to use with the graphs
   const colors = generatePalette();
+  
   // object containing all the exercises with their total durations
   const exerciseDurations = exerciseDurationTotals(data);
   const eachExercise = Object.keys(exerciseDurations);
@@ -93,6 +95,9 @@ function populateChart(data) {
             display: true,
             scaleLabel: {
               display: true
+            },
+            ticks: {
+              beginAtZero: true
             }
           }
         ]
@@ -196,15 +201,17 @@ function populateChart(data) {
 };
 
 // Add up the duration of individual exercises within a workout to get total duration per workout
+// End up with aray of workout totals
 function duration(data) {
   let durations = [];
 
   data.forEach(workout => {
+    let workoutDuration = 0;
     workout.exercises.forEach(exercise => {
-      durations.push(exercise.duration);
+      workoutDuration += exercise.duration;
     });
+    durations.push(workoutDuration);
   });
-
   return durations;
 };
 
@@ -230,7 +237,6 @@ function calculateTotalWeight(data) {
     });
     total.push(workoutTotal);
   });
-  console.log("totals: ", total);
   return total;
 };
 
