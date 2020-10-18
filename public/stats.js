@@ -1,10 +1,10 @@
 // get all workout data from back-end
-
 fetch("/api/workouts/range")
   .then(response => {
     return response.json();
   })
   .then(data => {
+    // Use the past 7 days of workouts populate the charts
     populateChart(data.splice(-7));
   });
 
@@ -37,9 +37,10 @@ function generatePalette() {
 
 function populateChart(data) {
   console.log("data: ", data);
+  // an array of
+  let dateLabels = dates(data);
   let durations = duration(data);
   let pounds = calculateTotalWeight(data);
-  let workouts = workoutNames(data);
   const colors = generatePalette();
   // object containing all the exercises with their total durations
   const exerciseDurations = exerciseDurationTotals(data);
@@ -58,15 +59,7 @@ function populateChart(data) {
   let lineChart = new Chart(line, {
     type: "line",
     data: {
-      labels: [
-        "Sunday",
-        "Monday",
-        "Tuesday",
-        "Wednesday",
-        "Thursday",
-        "Friday",
-        "Saturday"
-      ],
+      labels: dateLabels,
       datasets: [
         {
           label: "Workout Duration In Minutes",
@@ -82,7 +75,7 @@ function populateChart(data) {
       mainAspectRatio: false,
       title: {
         display: true,
-        text: "Workout Duration Over the Past 7 Days",
+        text: "Workout Duration for the Past 7 Workouts",
         fontSize: 20
       },
       scales: {
@@ -110,15 +103,7 @@ function populateChart(data) {
   let barChart = new Chart(bar, {
     type: "bar",
     data: {
-      labels: [
-        "Sunday",
-        "Monday",
-        "Tuesday",
-        "Wednesday",
-        "Thursday",
-        "Friday",
-        "Saturday",
-      ],
+      labels: dateLabels,
       datasets: [
         {
           label: "Pounds",
@@ -148,7 +133,7 @@ function populateChart(data) {
       mainAspectRatio: false,
       title: {
         display: true,
-        text: "Pounds Lifted",
+        text: "Pounds Lifted During the Past 7 Workouts",
         fontSize: 20
       },
       scales: {
@@ -208,8 +193,9 @@ function populateChart(data) {
       }
     }
   });
-}
+};
 
+// Add up the duration of individual exercises within a workout to get total duration per workout
 function duration(data) {
   let durations = [];
 
@@ -220,32 +206,35 @@ function duration(data) {
   });
 
   return durations;
-}
+};
 
+// Format the workout dates in 01/01/2020 format to use as labels in bar and line graphs
+function dates(data) {
+  let dates = [];
+  data.forEach(workout =>{
+    dates.push(moment(new Date(workout.day)).format("L"));
+  });
+  return dates;
+};
+
+// Create an array that has the total weight for each workout
 function calculateTotalWeight(data) {
   let total = [];
 
   data.forEach(workout => {
+    let workoutTotal = 0;
     workout.exercises.forEach(exercise => {
-      total.push(exercise.weight);
+      if (exercise.weight) {
+        workoutTotal += exercise.weight
+      }
     });
+    total.push(workoutTotal);
   });
-
+  console.log("totals: ", total);
   return total;
-}
+};
 
-function workoutNames(data) {
-  let workouts = [];
-
-  data.forEach(workout => {
-    workout.exercises.forEach(exercise => {
-      workouts.push(exercise.name);
-    });
-  });
-
-  return workouts;
-}
-
+// Create an object that contains all unique exercise names with their total duration
 const exerciseDurationTotals = (data) => {
   // create an object for exercises
   let exerciseDurations = {}
@@ -267,8 +256,9 @@ const exerciseDurationTotals = (data) => {
   });
 
   return exerciseDurations;
-}
+};
 
+// Create an object that contains all unique exercise names with their max weight lifted
 const exerciseMaxPounds = (data) => {
   let exercisePounds = {}
 
@@ -290,9 +280,10 @@ const exerciseMaxPounds = (data) => {
     });
   });
 
-  console.log("excercise pounds: ", exercisePounds)
   return exercisePounds;
 }
+
+// Utility functions:
 
 // To capitalize a string
 const capitalize = (string) => {
@@ -313,4 +304,4 @@ const titleCase = (string) => {
       return capitalize(word);
     }
   }).join(" ");
-}
+};
