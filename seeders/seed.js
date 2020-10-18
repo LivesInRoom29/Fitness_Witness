@@ -1,8 +1,14 @@
 let mongoose = require("mongoose");
 let db = require("../models");
 
-//change from workout to fitnessdb
-mongoose.connect(process.env.DB_URL, {
+// To use the Atlas URL:
+// mongoose.connect(process.env.DB_URL, {
+//   useNewUrlParser: true,
+//   useFindAndModify: false
+// });
+
+// To use the db locally
+mongoose.connect("mongodb://localhost/fitnessdb", {
   useNewUrlParser: true,
   useFindAndModify: false
 });
